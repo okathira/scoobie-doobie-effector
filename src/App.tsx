@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam";
+import { Stage, Layer, Image } from "react-konva";
 
 const videoConstraints = {
   width: 1280,
@@ -13,16 +14,21 @@ const layoutSize = {
 };
 
 const App: React.FC = () => {
+  const [BaseCanvas, setBaseCanvas] = useState(
+    document.createElement("canvas")
+  );
   const [frameInterval, setFrameInterval]: [
     NodeJS.Timeout | undefined,
     React.Dispatch<React.SetStateAction<NodeJS.Timeout | undefined>>
   ] = useState();
 
   const cameraRef = useRef<Webcam>(null);
-  const baseImageRef = useRef<HTMLCanvasElement>(null);
 
   const refreshFrame = () => {
-    const ctx = baseImageRef.current?.getContext("2d")!;
+    const canvas = document.createElement("canvas");
+    canvas.width = layoutSize.width;
+    canvas.height = layoutSize.height;
+    const ctx = canvas.getContext("2d")!;
     ctx.drawImage(
       cameraRef.current!.video!,
       0,
@@ -45,16 +51,23 @@ const App: React.FC = () => {
     }
 
     ctx.putImageData(image, 0, 0);
+    setBaseCanvas(canvas);
   };
 
   useEffect(() => {
     if (!frameInterval)
-      setFrameInterval(setInterval(() => refreshFrame(), 1000 / 30));
+      setFrameInterval(
+        setInterval(
+          () => refreshFrame(), //refreshFrame(baseImageRef.current?.getContext("2d")!),
+          1000 / 30
+        )
+      );
 
     return () => {
       clearInterval(frameInterval!);
     };
-  }, [frameInterval]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <section className="App">
@@ -66,12 +79,15 @@ const App: React.FC = () => {
         width={layoutSize.width}
         height={layoutSize.height}
       />
-      <canvas
+      <Stage
         id="outputArea"
-        ref={baseImageRef}
         width={layoutSize.width}
         height={layoutSize.height}
-      />
+      >
+        <Layer>
+          <Image id="baseCanvas" image={BaseCanvas} />
+        </Layer>
+      </Stage>
     </section>
   );
 };
