@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam";
-import { Stage, Layer, Image } from "react-konva";
+import { Stage } from "react-konva";
+import ClippingBoxes, { BoxProps } from "./ClippingBoxes";
 
 const videoConstraints = {
   width: 1280,
@@ -30,13 +31,14 @@ const getGrayscale = (image: ImageData) => {
 };
 
 const App: React.FC = () => {
-  const [BaseCanvas, setBaseCanvas] = useState(
+  const [baseCanvas, setBaseCanvas] = useState(
     document.createElement("canvas")
   );
   const [frameInterval, setFrameInterval]: [
     NodeJS.Timeout | undefined,
     React.Dispatch<React.SetStateAction<NodeJS.Timeout | undefined>>
   ] = useState();
+  const [boxesProps, setBoxesProps] = useState<BoxProps[]>([]);
 
   const cameraRef = useRef<Webcam>(null);
 
@@ -79,15 +81,25 @@ const App: React.FC = () => {
         videoConstraints={videoConstraints}
         width={layoutSize.width}
         height={layoutSize.height}
+        onClick={(e) =>
+          setBoxesProps([
+            ...boxesProps,
+            {
+              key: boxesProps.length,
+              showX: e.clientX,
+              showY: e.clientY,
+              showWidth: e.clientX,
+              showHeight: e.clientY,
+            },
+          ])
+        }
       />
       <Stage
         id="outputArea"
         width={layoutSize.width}
         height={layoutSize.height}
       >
-        <Layer>
-          <Image id="baseCanvas" image={BaseCanvas} />
-        </Layer>
+        <ClippingBoxes currentFrame={baseCanvas} boxesProps={boxesProps} />
       </Stage>
     </section>
   );
