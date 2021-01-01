@@ -13,6 +13,22 @@ const layoutSize = {
   height: 360,
 };
 
+const getGrayscale = (image: ImageData) => {
+  const l = image.data.length / 4;
+  for (let i = 0; i < l; i++) {
+    const grayscale =
+      image.data[i * 4 + 0] * 0.299 +
+      image.data[i * 4 + 1] * 0.587 +
+      image.data[i * 4 + 2] * 0.114;
+
+    image.data[i * 4 + 0] = grayscale;
+    image.data[i * 4 + 1] = grayscale;
+    image.data[i * 4 + 2] = grayscale;
+  }
+
+  return image;
+};
+
 const App: React.FC = () => {
   const [BaseCanvas, setBaseCanvas] = useState(
     document.createElement("canvas")
@@ -28,6 +44,7 @@ const App: React.FC = () => {
     const canvas = document.createElement("canvas");
     canvas.width = layoutSize.width;
     canvas.height = layoutSize.height;
+
     const ctx = canvas.getContext("2d")!;
     ctx.drawImage(
       cameraRef.current!.video!,
@@ -37,31 +54,15 @@ const App: React.FC = () => {
       layoutSize.height
     );
 
-    const image = ctx?.getImageData(0, 0, layoutSize.width, layoutSize.height);
-    const l = image.data.length / 4;
-    for (let i = 0; i < l; i++) {
-      const grayscale =
-        image.data[i * 4 + 0] * 0.299 +
-        image.data[i * 4 + 1] * 0.587 +
-        image.data[i * 4 + 2] * 0.114;
+    const image = ctx.getImageData(0, 0, layoutSize.width, layoutSize.height);
+    ctx.putImageData(getGrayscale(image), 0, 0);
 
-      image.data[i * 4 + 0] = grayscale;
-      image.data[i * 4 + 1] = grayscale;
-      image.data[i * 4 + 2] = grayscale;
-    }
-
-    ctx.putImageData(image, 0, 0);
     setBaseCanvas(canvas);
   };
 
   useEffect(() => {
     if (!frameInterval)
-      setFrameInterval(
-        setInterval(
-          () => refreshFrame(), //refreshFrame(baseImageRef.current?.getContext("2d")!),
-          1000 / 30
-        )
-      );
+      setFrameInterval(setInterval(() => refreshFrame(), 1000 / 30));
 
     return () => {
       clearInterval(frameInterval!);
