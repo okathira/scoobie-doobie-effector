@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam";
 import { Stage } from "react-konva";
 import ClippingBoxes, { BoxProps } from "./ClippingBoxes";
+import { Vector2d } from "konva/types/types";
 
 type RectSize = {
   width: number;
@@ -44,6 +45,7 @@ const App: React.FC = () => {
   const [baseCanvas, setBaseCanvas] = useState(createCanvas(layoutSize));
   const [frameInterval, setFrameInterval] = useState<NodeJS.Timeout>();
   const [boxesProps, setBoxesProps] = useState<BoxProps[]>([]);
+  const [mouseDownPos, setMouseDownPos] = useState<Vector2d>({ x: 0, y: 0 });
 
   const cameraRef = useRef<Webcam>(null);
 
@@ -76,23 +78,26 @@ const App: React.FC = () => {
         videoConstraints={videoConstraints}
         width={layoutSize.width}
         height={layoutSize.height}
-        onClick={(e) =>
+        onMouseDown={(e) => {
+          setMouseDownPos({ x: e.clientX, y: e.clientY });
+        }}
+        onClick={(e) => {
           setBoxesProps([
             ...boxesProps,
             {
               // test
               key: boxesProps.length,
-              srcX: 0,
-              srcY: 0,
-              srcWidth: e.clientX,
-              srcHeight: e.clientY,
-              showX: 10,
-              showY: 10,
-              showWidth: e.clientX,
-              showHeight: e.clientY,
+              srcX: mouseDownPos.x,
+              srcY: mouseDownPos.y,
+              srcWidth: e.clientX - mouseDownPos.x,
+              srcHeight: e.clientY - mouseDownPos.y,
+              showX: mouseDownPos.x,
+              showY: mouseDownPos.y,
+              showWidth: e.clientX - mouseDownPos.x,
+              showHeight: e.clientY - mouseDownPos.y,
             },
-          ])
-        }
+          ]);
+        }}
       />
       <Stage
         id="outputArea"
