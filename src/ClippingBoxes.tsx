@@ -35,6 +35,8 @@ const ClippingBoxes: React.FC<{
             y={boxProps.showY}
             width={boxProps.showWidth}
             height={boxProps.showHeight}
+            stroke={"black"}
+            strokeWidth={10}
             draggable
           />
         )))()}
