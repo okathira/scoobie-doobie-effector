@@ -1,6 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam";
-import { Stage, Layer, Image } from "react-konva";
+import { Stage } from "react-konva";
+import ClippingBoxes, { BoxProps } from "./ClippingBoxes";
+import { Vector2d } from "konva/types/types";
+
+type RectSize = {
+  width: number;
+  height: number;
+};
 
 const videoConstraints = {
   width: 1280,
@@ -8,12 +15,19 @@ const videoConstraints = {
   facingMode: "user",
 };
 
-const layoutSize = {
-  width: 640,
-  height: 360,
+const layoutSize: RectSize = {
+  ...videoConstraints,
 };
 
-const getGrayscale = (image: ImageData) => {
+const createCanvas = (size: RectSize) => {
+  const canvas = document.createElement("canvas");
+  canvas.width = size.width;
+  canvas.height = size.height;
+
+  return canvas;
+};
+
+const makeGrayscale = (image: ImageData) => {
   const l = image.data.length / 4;
   for (let i = 0; i < l; i++) {
     const grayscale =
@@ -25,44 +39,29 @@ const getGrayscale = (image: ImageData) => {
     image.data[i * 4 + 1] = grayscale;
     image.data[i * 4 + 2] = grayscale;
   }
-
-  return image;
 };
 
 const App: React.FC = () => {
-  const [BaseCanvas, setBaseCanvas] = useState(
-    document.createElement("canvas")
-  );
-  const [frameInterval, setFrameInterval]: [
-    NodeJS.Timeout | undefined,
-    React.Dispatch<React.SetStateAction<NodeJS.Timeout | undefined>>
-  ] = useState();
+  const [baseCanvas, setBaseCanvas] = useState(createCanvas(layoutSize));
+  const [frameInterval, setFrameInterval] = useState<NodeJS.Timeout>();
+  const [boxesProps, setBoxesProps] = useState<BoxProps[]>([]);
+  const [mouseDownPos, setMouseDownPos] = useState<Vector2d>({ x: 0, y: 0 });
 
   const cameraRef = useRef<Webcam>(null);
 
   const refreshFrame = () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = layoutSize.width;
-    canvas.height = layoutSize.height;
-
-    const ctx = canvas.getContext("2d")!;
-    ctx.drawImage(
-      cameraRef.current!.video!,
-      0,
-      0,
-      layoutSize.width,
-      layoutSize.height
-    );
+    const ctx = createCanvas(layoutSize).getContext("2d")!;
+    ctx.drawImage(cameraRef.current!.video!, 0, 0);
 
     const image = ctx.getImageData(0, 0, layoutSize.width, layoutSize.height);
-    ctx.putImageData(getGrayscale(image), 0, 0);
+    makeGrayscale(image);
+    ctx.putImageData(image, 0, 0);
 
-    setBaseCanvas(canvas);
+    setBaseCanvas(ctx.canvas);
   };
 
   useEffect(() => {
-    if (!frameInterval)
-      setFrameInterval(setInterval(() => refreshFrame(), 1000 / 30));
+    setFrameInterval(setInterval(() => refreshFrame(), 1000 / 30));
 
     return () => {
       clearInterval(frameInterval!);
@@ -79,15 +78,33 @@ const App: React.FC = () => {
         videoConstraints={videoConstraints}
         width={layoutSize.width}
         height={layoutSize.height}
+        onMouseDown={(e) => {
+          setMouseDownPos({ x: e.clientX, y: e.clientY });
+        }}
+        onClick={(e) => {
+          setBoxesProps([
+            ...boxesProps,
+            {
+              // test
+              key: boxesProps.length,
+              srcX: mouseDownPos.x,
+              srcY: mouseDownPos.y,
+              srcWidth: e.clientX - mouseDownPos.x,
+              srcHeight: e.clientY - mouseDownPos.y,
+              showX: mouseDownPos.x,
+              showY: mouseDownPos.y,
+              showWidth: e.clientX - mouseDownPos.x,
+              showHeight: e.clientY - mouseDownPos.y,
+            },
+          ]);
+        }}
       />
       <Stage
         id="outputArea"
         width={layoutSize.width}
         height={layoutSize.height}
       >
-        <Layer>
-          <Image id="baseCanvas" image={BaseCanvas} />
-        </Layer>
+        <ClippingBoxes currentFrame={baseCanvas} boxesProps={boxesProps} />
       </Stage>
     </section>
   );
