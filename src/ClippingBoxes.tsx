@@ -3,14 +3,14 @@ import { Layer, Image } from "react-konva";
 
 export type BoxProps = {
   key: number;
-  srcX?: number;
-  srcY?: number;
-  srcWidth?: number;
-  srcHeight?: number;
-  showX?: number;
-  showY?: number;
-  showWidth?: number;
-  showHeight?: number;
+  srcX: number;
+  srcY: number;
+  srcWidth: number;
+  srcHeight: number;
+  showX: number;
+  showY: number;
+  showWidth: number;
+  showHeight: number;
 };
 
 const ClippingBoxes: React.FC<{
@@ -25,6 +25,12 @@ const ClippingBoxes: React.FC<{
           <Image
             key={boxProps.key}
             image={currentFrame}
+            crop={{
+              x: boxProps.srcX,
+              y: boxProps.srcY,
+              width: boxProps.srcWidth,
+              height: boxProps.srcHeight,
+            }}
             x={boxProps.showX}
             y={boxProps.showY}
             width={boxProps.showWidth}

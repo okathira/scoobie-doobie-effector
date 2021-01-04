@@ -80,9 +80,14 @@ const App: React.FC = () => {
           setBoxesProps([
             ...boxesProps,
             {
+              // test
               key: boxesProps.length,
-              showX: e.clientX,
-              showY: e.clientY,
+              srcX: 0,
+              srcY: 0,
+              srcWidth: e.clientX,
+              srcHeight: e.clientY,
+              showX: 10,
+              showY: 10,
               showWidth: e.clientX,
               showHeight: e.clientY,
             },
