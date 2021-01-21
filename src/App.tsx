@@ -3,6 +3,7 @@ import Webcam from "react-webcam";
 import { Stage } from "react-konva";
 import ClippingBoxes, { BoxProps } from "./ClippingBoxes";
 import { Vector2d } from "konva/types/types";
+import Konva from "konva";
 
 type RectSize = {
   width: number;
@@ -48,6 +49,7 @@ const App: React.FC = () => {
   const [mouseDownPos, setMouseDownPos] = useState<Vector2d>({ x: 0, y: 0 });
 
   const cameraRef = useRef<Webcam>(null);
+  const inputAreaRef = useRef<Konva.Stage>(null);
 
   const refreshFrame = () => {
     const ctx = createCanvas(layoutSize).getContext("2d")!;
@@ -69,6 +71,15 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const getRelativePointerPosition = () => {
+    const node = inputAreaRef.current!;
+    const transform = node.getAbsoluteTransform().copy();
+    transform.invert();
+    const pos = node.getStage().getPointerPosition()!;
+
+    return transform.point(pos);
+  };
+
   return (
     <section className="App">
       <Webcam
@@ -78,29 +89,36 @@ const App: React.FC = () => {
         videoConstraints={videoConstraints}
         width={layoutSize.width}
         height={layoutSize.height}
+        style={{ position: "absolute" }}
+      />
+      <Stage
+        className="inputArea"
+        ref={inputAreaRef}
+        width={layoutSize.width}
+        height={layoutSize.height}
         onMouseDown={(e) => {
-          setMouseDownPos({ x: e.clientX, y: e.clientY });
+          setMouseDownPos({ x: e.evt.clientX, y: e.evt.clientY });
         }}
         onClick={(e) => {
+          const relativePos = getRelativePointerPosition();
           setBoxesProps([
             ...boxesProps,
             {
-              // test
               key: boxesProps.length,
-              srcX: mouseDownPos.x,
-              srcY: mouseDownPos.y,
-              srcWidth: e.clientX - mouseDownPos.x,
-              srcHeight: e.clientY - mouseDownPos.y,
-              showX: mouseDownPos.x,
-              showY: mouseDownPos.y,
-              showWidth: e.clientX - mouseDownPos.x,
-              showHeight: e.clientY - mouseDownPos.y,
+              srcX: relativePos.x,
+              srcY: relativePos.y,
+              srcWidth: mouseDownPos.x - e.evt.clientX,
+              srcHeight: mouseDownPos.y - e.evt.clientY,
+              showX: relativePos.x,
+              showY: relativePos.y,
+              showWidth: mouseDownPos.x - e.evt.clientX,
+              showHeight: mouseDownPos.y - e.evt.clientY,
             },
           ]);
         }}
-      />
+      ></Stage>
       <Stage
-        id="outputArea"
+        className="outputArea"
         width={layoutSize.width}
         height={layoutSize.height}
       >
