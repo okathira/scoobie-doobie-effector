@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam";
-import { Stage } from "react-konva";
+import { Layer, Stage, Rect } from "react-konva";
 import ClippingBoxes, { BoxProps } from "./ClippingBoxes";
 import { Vector2d } from "konva/types/types";
 import Konva from "konva";
@@ -42,11 +42,29 @@ const makeGrayscale = (image: ImageData) => {
   }
 };
 
+const SelectionRect: React.FC<{
+  beginPos: Vector2d;
+  endPos: Vector2d;
+}> = ({ beginPos, endPos }) => {
+  return (
+    <Rect
+      x={beginPos.x}
+      y={beginPos.y}
+      width={endPos.x - beginPos.x}
+      height={endPos.y - beginPos.y}
+      fill={"blue"}
+      stroke={"red"}
+      opacity={0.2}
+    />
+  );
+};
+
 const App: React.FC = () => {
   const [baseCanvas, setBaseCanvas] = useState(createCanvas(layoutSize));
   const [frameInterval, setFrameInterval] = useState<NodeJS.Timeout>();
   const [boxesProps, setBoxesProps] = useState<BoxProps[]>([]);
   const [mouseDownPos, setMouseDownPos] = useState<Vector2d>({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState<Boolean>(false);
 
   const cameraRef = useRef<Webcam>(null);
   const inputAreaRef = useRef<Konva.Stage>(null);
@@ -93,13 +111,14 @@ const App: React.FC = () => {
       />
       <Stage
         className="inputArea"
-        ref={inputAreaRef}
         width={layoutSize.width}
         height={layoutSize.height}
-        onMouseDown={(e) => {
-          setMouseDownPos({ x: e.evt.clientX, y: e.evt.clientY });
+        ref={inputAreaRef}
+        onMouseDown={() => {
+          setMouseDownPos(getRelativePointerPosition());
+          setDragging(true);
         }}
-        onClick={(e) => {
+        onMouseUp={() => {
           const relativePos = getRelativePointerPosition();
           setBoxesProps([
             ...boxesProps,
@@ -107,16 +126,26 @@ const App: React.FC = () => {
               key: boxesProps.length,
               srcX: relativePos.x,
               srcY: relativePos.y,
-              srcWidth: mouseDownPos.x - e.evt.clientX,
-              srcHeight: mouseDownPos.y - e.evt.clientY,
+              srcWidth: mouseDownPos.x - relativePos.x,
+              srcHeight: mouseDownPos.y - relativePos.y,
               showX: relativePos.x,
               showY: relativePos.y,
-              showWidth: mouseDownPos.x - e.evt.clientX,
-              showHeight: mouseDownPos.y - e.evt.clientY,
+              showWidth: mouseDownPos.x - relativePos.x,
+              showHeight: mouseDownPos.y - relativePos.y,
             },
           ]);
+          setDragging(false);
         }}
-      ></Stage>
+      >
+        <Layer>
+          {dragging ? (
+            <SelectionRect
+              beginPos={mouseDownPos}
+              endPos={getRelativePointerPosition()}
+            />
+          ) : null}
+        </Layer>
+      </Stage>
       <Stage
         className="outputArea"
         width={layoutSize.width}
