@@ -3,50 +3,21 @@ import Webcam from "react-webcam";
 import InputArea from "./InputArea";
 import OutputArea from "./OutputArea";
 
-const videoConstraints = {
-  width: 1280,
-  height: 720,
-  facingMode: "user",
-};
-
-const layoutSize: RectSize = {
-  ...videoConstraints,
-};
-
-const createCanvas = (size: RectSize) => {
-  const canvas = document.createElement("canvas");
-  canvas.width = size.width;
-  canvas.height = size.height;
-
-  return canvas;
-};
-
-const makeGrayscale = (image: ImageData) => {
-  const l = image.data.length / 4;
-  for (let i = 0; i < l; i++) {
-    const grayscale =
-      image.data[i * 4 + 0] * 0.299 +
-      image.data[i * 4 + 1] * 0.587 +
-      image.data[i * 4 + 2] * 0.114;
-
-    image.data[i * 4 + 0] = grayscale;
-    image.data[i * 4 + 1] = grayscale;
-    image.data[i * 4 + 2] = grayscale;
-  }
-};
+import { createCanvas, makeGrayscale } from "./canvasFunctions";
+import { cameraSize, videoConstraints } from "./defaultConfig";
 
 const App: React.FC = () => {
-  const [baseCanvas, setBaseCanvas] = useState(createCanvas(layoutSize));
+  const [baseCanvas, setBaseCanvas] = useState(createCanvas(cameraSize));
   const [frameInterval, setFrameInterval] = useState<NodeJS.Timeout>();
   const [boxesProps, setBoxesProps] = useState<BoxProps[]>([]);
 
   const cameraRef = useRef<Webcam>(null);
 
   const refreshFrame = () => {
-    const ctx = createCanvas(layoutSize).getContext("2d")!;
+    const ctx = createCanvas(cameraSize).getContext("2d")!;
     ctx.drawImage(cameraRef.current!.video!, 0, 0);
 
-    const image = ctx.getImageData(0, 0, layoutSize.width, layoutSize.height);
+    const image = ctx.getImageData(0, 0, cameraSize.width, cameraSize.height);
     makeGrayscale(image);
     ctx.putImageData(image, 0, 0);
 
@@ -69,17 +40,17 @@ const App: React.FC = () => {
         ref={cameraRef}
         audio={false}
         videoConstraints={videoConstraints}
-        width={layoutSize.width}
-        height={layoutSize.height}
+        width={cameraSize.width}
+        height={cameraSize.height}
         style={{ position: "absolute" }}
       />
       <InputArea
-        layoutSize={layoutSize}
+        layoutSize={cameraSize}
         boxesProps={boxesProps}
         setBoxesProps={setBoxesProps}
       />
       <OutputArea
-        layoutSize={layoutSize}
+        layoutSize={cameraSize}
         baseCanvas={baseCanvas}
         boxesProps={boxesProps}
       />
