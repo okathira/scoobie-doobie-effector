@@ -8,33 +8,39 @@ import { cameraSize, videoConstraints } from "./defaultConfig";
 
 const App: React.FC = () => {
   const [baseCanvas, setBaseCanvas] = useState(createCanvas(cameraSize));
-  const [frameInterval, setFrameInterval] = useState<NodeJS.Timeout>();
   const [boxesProps, setBoxesProps] = useState<BoxProps[]>([]);
 
   const cameraRef = useRef<Webcam>(null);
+  const frameInterval = useRef<NodeJS.Timeout>();
 
-  const refreshFrame = () => {
-    const ctx = createCanvas(cameraSize).getContext("2d")!;
-    ctx.drawImage(cameraRef.current!.video!, 0, 0);
+  const refreshFrame = (canvasSize: RectSize) => {
+    if (!(cameraRef.current && cameraRef.current.video)) return;
+    const ctx = createCanvas(canvasSize).getContext("2d");
 
-    const image = ctx.getImageData(0, 0, cameraSize.width, cameraSize.height);
+    if (!ctx) return;
+    ctx.drawImage(cameraRef.current.video, 0, 0);
+
+    const image = ctx.getImageData(0, 0, canvasSize.width, canvasSize.height);
     makeGrayscale(image);
     ctx.putImageData(image, 0, 0);
 
     setBaseCanvas(ctx.canvas);
   };
 
+  const FPS = 30;
   useEffect(() => {
-    setFrameInterval(setInterval(() => refreshFrame(), 1000 / 30));
+    frameInterval.current = setInterval(
+      () => refreshFrame(cameraSize),
+      1000 / FPS
+    );
 
     return () => {
-      clearInterval(frameInterval!);
+      clearInterval(frameInterval.current!);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [FPS]);
 
   return (
-    <section className="App">
+    <section id="app">
       <Webcam
         id="camera"
         ref={cameraRef}
