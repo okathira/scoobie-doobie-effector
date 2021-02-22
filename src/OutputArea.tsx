@@ -18,7 +18,7 @@ const OutputArea: React.FC<{
     >
       <Layer>
         <Image image={baseCanvas} />
-        <ClippingBoxes currentFrame={baseCanvas} boxesProps={boxesProps} />
+        <ClippingBoxes currentFrame={baseCanvas} _boxesProps={boxesProps} />
       </Layer>
     </Stage>
   );
