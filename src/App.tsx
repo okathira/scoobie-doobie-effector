@@ -13,22 +13,22 @@ const App: React.FC = () => {
   const cameraRef = useRef<Webcam>(null);
   const frameInterval = useRef<NodeJS.Timeout>();
 
-  const refreshFrame = (canvasSize: RectSize) => {
-    if (!(cameraRef.current && cameraRef.current.video)) return;
-    const ctx = createCanvas(canvasSize).getContext("2d");
-
-    if (!ctx) return;
-    ctx.drawImage(cameraRef.current.video, 0, 0);
-
-    const image = ctx.getImageData(0, 0, canvasSize.width, canvasSize.height);
-    makeGrayscale(image);
-    ctx.putImageData(image, 0, 0);
-
-    setBaseCanvas(ctx.canvas);
-  };
-
   const FPS = 30;
   useEffect(() => {
+    const refreshFrame = (canvasSize: RectSize) => {
+      if (!(cameraRef.current && cameraRef.current.video)) return;
+      const ctx = createCanvas(canvasSize).getContext("2d");
+
+      if (!ctx) return;
+      ctx.drawImage(cameraRef.current.video, 0, 0);
+
+      const image = ctx.getImageData(0, 0, canvasSize.width, canvasSize.height);
+      makeGrayscale(image);
+      ctx.putImageData(image, 0, 0);
+
+      setBaseCanvas(ctx.canvas);
+    };
+
     frameInterval.current = setInterval(
       () => refreshFrame(cameraSize),
       1000 / FPS
