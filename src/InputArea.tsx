@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Layer, Stage, Rect } from "react-konva";
+import { useSetBoxesProps } from "./contextData";
 
 import Konva from "konva";
 import { Vector2d } from "konva/types/types";
@@ -24,9 +25,8 @@ const SelectionRect: React.FC<{
 
 const InputArea: React.FC<{
   layoutSize: RectSize;
-  boxesProps: BoxProps[];
-  setBoxesProps: React.Dispatch<React.SetStateAction<BoxProps[]>>;
-}> = ({ layoutSize, boxesProps, setBoxesProps }) => {
+}> = ({ layoutSize }) => {
+  const setBoxesProps = useSetBoxesProps();
   const [mouseDownPos, setMouseDownPos] = useState<Vector2d>({ x: 0, y: 0 });
   const [dragging, setDragging] = useState<Boolean>(false);
 
@@ -37,10 +37,10 @@ const InputArea: React.FC<{
       x: 0,
       y: 0,
     };
-    setBoxesProps([
-      ...boxesProps,
+    setBoxesProps((preState) => [
+      ...preState,
       {
-        key: boxesProps.length,
+        key: preState.length,
         srcX: relativePos.x,
         srcY: relativePos.y,
         srcWidth: mouseDownPos.x - relativePos.x,
@@ -55,7 +55,7 @@ const InputArea: React.FC<{
 
   return (
     <Stage
-      className="inputArea"
+      className="input-area"
       width={layoutSize.width}
       height={layoutSize.height}
       ref={inputAreaRef}

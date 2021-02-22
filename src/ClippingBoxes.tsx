@@ -3,7 +3,7 @@ import { Image } from "react-konva";
 
 const ClippingBoxes: React.FC<{
   currentFrame: CanvasImageSource;
-  boxesProps: BoxProps[];
+  boxesProps: BoxProps[]; // TODO: コンテキストにするとレンダリングされないのを治す
 }> = ({ currentFrame, boxesProps }) => {
   return (
     <>
