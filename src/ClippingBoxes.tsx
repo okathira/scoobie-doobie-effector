@@ -4,14 +4,12 @@ import { useBoxesProps } from "./contextData";
 
 const ClippingBoxes: React.FC<{
   currentFrame: CanvasImageSource;
-  _boxesProps: BoxProps[]; // TODO: コンテキストにするとレンダリングされないのを治す
-}> = ({ currentFrame, _boxesProps }) => {
+}> = ({ currentFrame }) => {
   const boxesProps = useBoxesProps();
 
   return (
     <>
       {(() =>
-        // _boxesProps
         boxesProps.map((boxProps) => (
           <Image
             key={boxProps.key}
