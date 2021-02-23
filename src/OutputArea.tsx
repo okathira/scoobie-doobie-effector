@@ -1,13 +1,13 @@
 import React from "react";
 import { Stage, Layer, Image } from "react-konva";
 import ClippingBoxes from "./ClippingBoxes";
-import { useBoxesProps } from "./contextData";
+import { useBoxesProps, boxesPropsContext } from "./contextData";
 
 const OutputArea: React.FC<{
   layoutSize: RectSize;
   baseCanvas: CanvasImageSource;
 }> = ({ layoutSize, baseCanvas }) => {
-  // TODO: 子に渡しているだけのため消したい
+  // Contextは<Stage>を通り抜けないためブリッジする必要がある
   const boxesProps = useBoxesProps();
 
   return (
@@ -16,10 +16,12 @@ const OutputArea: React.FC<{
       width={layoutSize.width}
       height={layoutSize.height}
     >
-      <Layer>
-        <Image image={baseCanvas} />
-        <ClippingBoxes currentFrame={baseCanvas} boxesProps={boxesProps} />
-      </Layer>
+      <boxesPropsContext.Provider value={boxesProps}>
+        <Layer>
+          <Image image={baseCanvas} />
+          <ClippingBoxes currentFrame={baseCanvas} />
+        </Layer>
+      </boxesPropsContext.Provider>
     </Stage>
   );
 };
