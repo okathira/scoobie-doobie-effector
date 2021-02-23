@@ -75,6 +75,7 @@ const InputArea: React.FC<{
           <SelectionRect
             beginPos={mouseDownPos}
             endPos={getRelativePointerPosition(inputAreaRef) || { x: 0, y: 0 }}
+            // FIXME: endPosの更新タイミングで描画されず、baseCanvasの更新により描画されている。
           />
         ) : null}
       </Layer>
