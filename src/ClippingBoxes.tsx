@@ -1,25 +1,14 @@
 import React from "react";
-import { Layer, Image } from "react-konva";
-
-export type BoxProps = {
-  key: number;
-  srcX: number;
-  srcY: number;
-  srcWidth: number;
-  srcHeight: number;
-  showX: number;
-  showY: number;
-  showWidth: number;
-  showHeight: number;
-};
+import { Image } from "react-konva";
+import { useBoxesProps } from "./contextData";
 
 const ClippingBoxes: React.FC<{
   currentFrame: CanvasImageSource;
-  boxesProps: BoxProps[];
-}> = ({ currentFrame, boxesProps }) => {
+}> = ({ currentFrame }) => {
+  const boxesProps = useBoxesProps();
+
   return (
-    <Layer>
-      <Image id="baseCanvas" image={currentFrame} />
+    <>
       {(() =>
         boxesProps.map((boxProps) => (
           <Image
@@ -40,7 +29,7 @@ const ClippingBoxes: React.FC<{
             draggable
           />
         )))()}
-    </Layer>
+    </>
   );
 };
 
