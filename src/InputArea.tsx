@@ -41,14 +41,14 @@ const InputArea: React.FC<{
       ...preState,
       {
         key: preState.length,
-        srcX: relativePos.x,
-        srcY: relativePos.y,
-        srcWidth: mouseDownPos.x - relativePos.x,
-        srcHeight: mouseDownPos.y - relativePos.y,
-        showX: relativePos.x,
-        showY: relativePos.y,
-        showWidth: mouseDownPos.x - relativePos.x,
-        showHeight: mouseDownPos.y - relativePos.y,
+        cropX: relativePos.x,
+        cropY: relativePos.y,
+        cropWidth: mouseDownPos.x - relativePos.x,
+        cropHeight: mouseDownPos.y - relativePos.y,
+        x: relativePos.x,
+        y: relativePos.y,
+        width: mouseDownPos.x - relativePos.x,
+        height: mouseDownPos.y - relativePos.y,
       },
     ]);
   };

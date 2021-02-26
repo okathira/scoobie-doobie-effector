@@ -7,12 +7,12 @@ type RectSize = {
 
 type BoxProps = {
   key: number;
-  srcX: number;
-  srcY: number;
-  srcWidth: number;
-  srcHeight: number;
-  showX: number;
-  showY: number;
-  showWidth: number;
-  showHeight: number;
+  cropX: number;
+  cropY: number;
+  cropWidth: number;
+  cropHeight: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 };

@@ -12,18 +12,8 @@ const ClippingBoxes: React.FC<{
       {(() =>
         boxesProps.map((boxProps) => (
           <Image
-            key={boxProps.key}
+            {...boxProps}
             image={currentFrame}
-            crop={{
-              x: boxProps.srcX,
-              y: boxProps.srcY,
-              width: boxProps.srcWidth,
-              height: boxProps.srcHeight,
-            }}
-            x={boxProps.showX}
-            y={boxProps.showY}
-            width={boxProps.showWidth}
-            height={boxProps.showHeight}
             stroke={"black"}
             strokeWidth={10}
             draggable
