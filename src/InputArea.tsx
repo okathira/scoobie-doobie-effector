@@ -33,7 +33,7 @@ const InputArea: React.FC<{
   const inputAreaRef = useRef<Konva.Stage>(null);
 
   const addBoxProps = () => {
-    const relativePos = getRelativePointerPosition(inputAreaRef) || {
+    const relativePos = getRelativePointerPosition(inputAreaRef) ?? {
       x: 0,
       y: 0,
     };
@@ -61,7 +61,7 @@ const InputArea: React.FC<{
       ref={inputAreaRef}
       onMouseDown={() => {
         setMouseDownPos(
-          getRelativePointerPosition(inputAreaRef) || { x: 0, y: 0 }
+          getRelativePointerPosition(inputAreaRef) ?? { x: 0, y: 0 }
         );
         setDragging(true);
       }}
@@ -74,7 +74,7 @@ const InputArea: React.FC<{
         {dragging ? (
           <SelectionRect
             beginPos={mouseDownPos}
-            endPos={getRelativePointerPosition(inputAreaRef) || { x: 0, y: 0 }}
+            endPos={getRelativePointerPosition(inputAreaRef) ?? { x: 0, y: 0 }}
             // FIXME: endPosの更新タイミングで描画されず、baseCanvasの更新により描画されている。
           />
         ) : null}

@@ -8,9 +8,9 @@ const getRelativePointerPosition = (
   const node = ref.current;
   const transform = node.getAbsoluteTransform().copy();
   transform.invert();
-  const pos = node.getStage().getPointerPosition()!;
+  const pos = node.getStage().getPointerPosition();
 
-  return transform.point(pos);
+  return pos ? transform.point(pos) : null;
 };
 
 export { getRelativePointerPosition };
