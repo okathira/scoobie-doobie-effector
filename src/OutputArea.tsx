@@ -1,6 +1,6 @@
 import React from "react";
-import { Stage, Layer, Image } from "react-konva";
-import ClippingBoxes from "./ClippingBoxes";
+import { Stage } from "react-konva";
+import Exhibition from "./Exhibition";
 import { useBoxesProps, boxesPropsContext } from "./contextData";
 
 const OutputArea: React.FC<{
@@ -17,10 +17,7 @@ const OutputArea: React.FC<{
       height={layoutSize.height}
     >
       <boxesPropsContext.Provider value={boxesProps}>
-        <Layer>
-          <Image image={baseCanvas} />
-          <ClippingBoxes currentFrame={baseCanvas} />
-        </Layer>
+        <Exhibition currentFrame={baseCanvas} />
       </boxesPropsContext.Provider>
     </Stage>
   );
