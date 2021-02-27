@@ -73,6 +73,7 @@ const ClippingBoxes: React.FC<{
               ? oldBox
               : newBox;
           }}
+          rotateEnabled={false}
         />
       )}
     </>
