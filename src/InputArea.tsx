@@ -33,23 +33,32 @@ const InputArea: React.FC<{
   const inputAreaRef = useRef<Konva.Stage>(null);
 
   const addBoxProps = () => {
-    const relativePos = getRelativePointerPosition(inputAreaRef) ?? {
+    const mouseUpPos = getRelativePointerPosition(inputAreaRef) ?? {
       x: 0,
       y: 0,
     };
+
     setBoxesProps((preState) => [
       ...preState,
-      {
-        key: preState.length,
-        cropX: relativePos.x,
-        cropY: relativePos.y,
-        cropWidth: mouseDownPos.x - relativePos.x,
-        cropHeight: mouseDownPos.y - relativePos.y,
-        x: relativePos.x,
-        y: relativePos.y,
-        width: mouseDownPos.x - relativePos.x,
-        height: mouseDownPos.y - relativePos.y,
-      },
+      (() => {
+        // 左上頂点で座標を管理
+        const x = Math.min(mouseDownPos.x, mouseUpPos.x);
+        const y = Math.min(mouseDownPos.y, mouseUpPos.y);
+        const width = Math.abs(mouseDownPos.x - mouseUpPos.x);
+        const height = Math.abs(mouseDownPos.y - mouseUpPos.y);
+
+        return {
+          key: preState.length,
+          cropX: x,
+          cropY: y,
+          cropWidth: width,
+          cropHeight: height,
+          x,
+          y,
+          width,
+          height,
+        };
+      })(),
     ]);
   };
 

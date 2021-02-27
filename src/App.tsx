@@ -52,11 +52,11 @@ const App: React.FC = () => {
         style={{ position: "absolute" }}
       />
       <setBoxesPropsContext.Provider value={setBoxesProps}>
-        <InputArea layoutSize={cameraSize} />
+        <boxesPropsContext.Provider value={boxesProps}>
+          <InputArea layoutSize={cameraSize} />
+          <OutputArea layoutSize={cameraSize} baseCanvas={baseCanvas} />
+        </boxesPropsContext.Provider>
       </setBoxesPropsContext.Provider>
-      <boxesPropsContext.Provider value={boxesProps}>
-        <OutputArea layoutSize={cameraSize} baseCanvas={baseCanvas} />
-      </boxesPropsContext.Provider>
     </section>
   );
 };
