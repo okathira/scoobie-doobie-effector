@@ -35,8 +35,7 @@ const ClippingBoxes: React.FC<{
           });
         }}
         onTransformEnd={() => {
-          // FIXME: 変形中は表示倍率を変更しているため枠線にも影響が出るのに対し、
-          // 変形後は枠線の幅が戻るため、結果を確認しながら操作ができなくなっている。
+          // FIXME: 変形中は枠線部を含めた表示倍率を変更しているためその分ずれる。
 
           // transformerはnodeのscaleを変更し、widthとheightはそのまま。
           // しかし、データの管理を容易にするため、変形終了時にスケールをリセットする。
@@ -61,6 +60,7 @@ const ClippingBoxes: React.FC<{
         image={currentFrame}
         stroke={"black"}
         strokeWidth={10}
+        strokeScaleEnabled={false}
         draggable
       />
       {isSelected && (

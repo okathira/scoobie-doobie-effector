@@ -57,6 +57,8 @@ const InputArea: React.FC<{
           y,
           width,
           height,
+          scaleX: 1,
+          scaleY: 1,
         };
       })(),
     ]);
