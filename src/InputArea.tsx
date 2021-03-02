@@ -44,8 +44,8 @@ const InputArea: React.FC<{
         // 左上頂点で座標を管理
         const x = Math.min(mouseDownPos.x, mouseUpPos.x);
         const y = Math.min(mouseDownPos.y, mouseUpPos.y);
-        const width = Math.abs(mouseDownPos.x - mouseUpPos.x);
-        const height = Math.abs(mouseDownPos.y - mouseUpPos.y);
+        const width = Math.abs(mouseDownPos.x - mouseUpPos.x) + 1;
+        const height = Math.abs(mouseDownPos.y - mouseUpPos.y) + 1;
 
         return {
           key: preState.length,
