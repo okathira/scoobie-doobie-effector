@@ -9,7 +9,9 @@ import { cameraSize, videoConstraints } from "./defaultConfig";
 
 const App: React.FC = () => {
   const [baseCanvas, setBaseCanvas] = useState(createCanvas(cameraSize));
-  const [BoxContainers, setBoxContainers] = useState<BoxContainer[]>([]);
+  const [BoxContainers, setBoxContainers] = useState<Map<number, BoxProps>>(
+    new Map()
+  );
 
   const cameraRef = useRef<Webcam>(null);
   const frameInterval = useRef<NodeJS.Timeout>();

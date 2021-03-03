@@ -38,16 +38,15 @@ const InputArea: React.FC<{
       y: 0,
     };
 
-    setBoxContainers((preState) => [
-      ...preState,
-      ((): BoxContainer => {
+    setBoxContainers(
+      (preState): Map<number, BoxProps> => {
         // 左上頂点で座標を管理
         const x = Math.min(mouseDownPos.x, mouseUpPos.x);
         const y = Math.min(mouseDownPos.y, mouseUpPos.y);
         const width = Math.abs(mouseDownPos.x - mouseUpPos.x) + 1;
         const height = Math.abs(mouseDownPos.y - mouseUpPos.y) + 1;
         // 表示時は反転に備えて中心座標で管理
-        const boxProps: BoxProps = {
+        const newProps: BoxProps = {
           cropX: x,
           cropY: y,
           cropWidth: width,
@@ -60,12 +59,12 @@ const InputArea: React.FC<{
           scaleY: 1,
         };
 
-        return {
-          key: preState.length, // TODO: 要素の削除に対応させる
-          boxProps,
-        };
-      })(),
-    ]);
+        const newState = new Map(preState);
+        newState.set(preState.size, newProps);
+
+        return newState;
+      }
+    );
   };
 
   return (

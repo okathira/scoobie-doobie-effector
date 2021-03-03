@@ -24,19 +24,19 @@ const Exhibition: React.FC<{
     <Layer>
       <Image image={currentFrame} onMouseDown={checkDeselect} />
       {(() =>
-        boxContainers.map((boxContainer, i) => (
+        Array.from(boxContainers).map(([key, boxProps]) => (
           <ClippingBox
-            key={boxContainer.key}
-            boxProps={boxContainer.boxProps}
+            key={key}
+            boxProps={boxProps}
             currentFrame={currentFrame}
-            isSelected={boxContainer.key === selectedKey}
+            isSelected={key === selectedKey}
             onSelect={() => {
-              setSelectedKey(boxContainer.key);
+              setSelectedKey(key);
             }}
             onChange={(boxProps: BoxProps) => {
-              const boxes = [...boxContainers];
-              boxes[i] = { ...boxes[i], boxProps }; // REVIEW: 順序が変わったときに対応できるか？
-              setBoxContainers(boxes);
+              const newState = new Map(boxContainers);
+              newState.set(key, boxProps);
+              setBoxContainers(newState);
             }}
           />
         )))()}

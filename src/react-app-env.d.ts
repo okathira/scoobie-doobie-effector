@@ -17,8 +17,3 @@ type BoxProps = {
   scaleX: number;
   scaleY: number;
 };
-
-type BoxContainer = {
-  key: number;
-  boxProps: BoxProps;
-};
