@@ -7,10 +7,11 @@ import { minimumBoxSize } from "./defaultConfig";
 const ClippingBoxes: React.FC<{
   currentFrame: CanvasImageSource;
   boxProps: BoxProps;
+  flip: Flip;
   isSelected: boolean;
   onSelect: () => void;
   onChange: (newProps: BoxProps) => void;
-}> = ({ currentFrame, boxProps, isSelected, onSelect, onChange }) => {
+}> = ({ currentFrame, boxProps, flip, isSelected, onSelect, onChange }) => {
   const shapeRef = useRef<Konva.Image>(null);
   const transformerRef = useRef<Konva.Transformer>(null);
 
@@ -45,6 +46,7 @@ const ClippingBoxes: React.FC<{
           node.scaleX(1);
           node.scaleY(1);
 
+          // FIXME: 変形後の一瞬だけ直前の座標で描画されてちらつく
           onChange({
             ...boxProps,
             x: node.x(),
@@ -55,6 +57,18 @@ const ClippingBoxes: React.FC<{
           });
         }}
         {...boxProps}
+        offset={{
+          x: shapeRef.current?.width()! / 2,
+          y: shapeRef.current?.height()! / 2,
+        }}
+        scale={{
+          x: flip.horizontal
+            ? -shapeRef.current?.scaleX()!
+            : shapeRef.current?.scaleX()!,
+          y: flip.vertical
+            ? -shapeRef.current?.scaleY()!
+            : shapeRef.current?.scaleY()!,
+        }}
         image={currentFrame}
         stroke={"black"}
         strokeWidth={10}

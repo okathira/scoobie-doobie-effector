@@ -46,13 +46,14 @@ const InputArea: React.FC<{
         const y = Math.min(mouseDownPos.y, mouseUpPos.y);
         const width = Math.abs(mouseDownPos.x - mouseUpPos.x) + 1;
         const height = Math.abs(mouseDownPos.y - mouseUpPos.y) + 1;
+        // 表示時は反転に備えて中心座標で管理
         const boxProps: BoxProps = {
           cropX: x,
           cropY: y,
           cropWidth: width,
           cropHeight: height,
-          x,
-          y,
+          x: x + width / 2,
+          y: y + height / 2,
           width,
           height,
         };
