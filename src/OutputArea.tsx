@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Stage } from "react-konva";
 import Exhibition from "./Exhibition";
+import Controller from "./Controller";
 import {
-  useBoxesProps,
-  boxesPropsContext,
-  useSetBoxesProps,
-  setBoxesPropsContext,
+  useBoxContainers,
+  boxContainersContext,
+  useSetBoxContainers,
+  setBoxContainersContext,
 } from "./contextData";
 
 const OutputArea: React.FC<{
@@ -13,21 +14,29 @@ const OutputArea: React.FC<{
   baseCanvas: CanvasImageSource;
 }> = ({ layoutSize, baseCanvas }) => {
   // Contextは<Stage>を通り抜けないためブリッジする必要がある
-  const boxesProps = useBoxesProps();
-  const setBoxesProps = useSetBoxesProps();
+  const boxContainers = useBoxContainers();
+  const setBoxContainers = useSetBoxContainers();
+
+  const selectedKeyState = useState<number>();
 
   return (
-    <Stage
-      className="output-area"
-      width={layoutSize.width}
-      height={layoutSize.height}
-    >
-      <setBoxesPropsContext.Provider value={setBoxesProps}>
-        <boxesPropsContext.Provider value={boxesProps}>
-          <Exhibition currentFrame={baseCanvas} />
-        </boxesPropsContext.Provider>
-      </setBoxesPropsContext.Provider>
-    </Stage>
+    <>
+      <Stage
+        className="output-area"
+        width={layoutSize.width}
+        height={layoutSize.height}
+      >
+        <setBoxContainersContext.Provider value={setBoxContainers}>
+          <boxContainersContext.Provider value={boxContainers}>
+            <Exhibition
+              currentFrame={baseCanvas}
+              selectedKeyState={selectedKeyState}
+            />
+          </boxContainersContext.Provider>
+        </setBoxContainersContext.Provider>
+      </Stage>
+      <Controller selectedKeyState={selectedKeyState} />
+    </>
   );
 };
 

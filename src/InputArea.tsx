@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Layer, Stage, Rect } from "react-konva";
-import { useSetBoxesProps } from "./contextData";
+import { useSetBoxContainers } from "./contextData";
 
 import Konva from "konva";
 import { Vector2d } from "konva/types/types";
@@ -26,29 +26,27 @@ const SelectionRect: React.FC<{
 const InputArea: React.FC<{
   layoutSize: RectSize;
 }> = ({ layoutSize }) => {
-  const setBoxesProps = useSetBoxesProps();
+  const setBoxContainers = useSetBoxContainers();
   const [mouseDownPos, setMouseDownPos] = useState<Vector2d>({ x: 0, y: 0 });
   const [dragging, setDragging] = useState<Boolean>(false);
 
   const inputAreaRef = useRef<Konva.Stage>(null);
 
-  const addBoxProps = () => {
+  const addBoxContainer = () => {
     const mouseUpPos = getRelativePointerPosition(inputAreaRef) ?? {
       x: 0,
       y: 0,
     };
 
-    setBoxesProps((preState) => [
+    setBoxContainers((preState) => [
       ...preState,
-      (() => {
+      ((): BoxContainer => {
         // 左上頂点で座標を管理
         const x = Math.min(mouseDownPos.x, mouseUpPos.x);
         const y = Math.min(mouseDownPos.y, mouseUpPos.y);
         const width = Math.abs(mouseDownPos.x - mouseUpPos.x) + 1;
         const height = Math.abs(mouseDownPos.y - mouseUpPos.y) + 1;
-
-        return {
-          key: preState.length,
+        const boxProps: BoxProps = {
           cropX: x,
           cropY: y,
           cropWidth: width,
@@ -57,8 +55,15 @@ const InputArea: React.FC<{
           y,
           width,
           height,
-          scaleX: 1,
-          scaleY: 1,
+        };
+
+        return {
+          key: preState.length, // TODO: 要素の削除に対応させる
+          boxProps,
+          flip: {
+            horizontal: false,
+            vertical: false,
+          },
         };
       })(),
     ]);
@@ -77,7 +82,7 @@ const InputArea: React.FC<{
         setDragging(true);
       }}
       onMouseUp={() => {
-        addBoxProps();
+        addBoxContainer();
         setDragging(false);
       }}
     >

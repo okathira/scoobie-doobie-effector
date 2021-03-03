@@ -1,15 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { Layer, Image } from "react-konva";
 import ClippingBox from "./ClippingBox";
-import { useBoxesProps, useSetBoxesProps } from "./contextData";
+import { useBoxContainers, useSetBoxContainers } from "./contextData";
 
 const Exhibition: React.FC<{
   currentFrame: CanvasImageSource;
-}> = ({ currentFrame }) => {
-  const [selectedKey, setSelectedKey] = useState<number>();
+  selectedKeyState: [
+    number | undefined,
+    React.Dispatch<React.SetStateAction<number | undefined>>
+  ];
+}> = ({ currentFrame, selectedKeyState }) => {
+  const [selectedKey, setSelectedKey] = selectedKeyState;
 
-  const boxesProps = useBoxesProps();
-  const setBoxesProps = useSetBoxesProps();
+  const boxContainers = useBoxContainers();
+  const setBoxContainers = useSetBoxContainers();
 
   const checkDeselect = () => {
     // 背景をクリックしたとき選択を解除
@@ -20,19 +24,19 @@ const Exhibition: React.FC<{
     <Layer>
       <Image image={currentFrame} onMouseDown={checkDeselect} />
       {(() =>
-        boxesProps.map((boxProps, i) => (
+        boxContainers.map((boxContainer, i) => (
           <ClippingBox
-            key={boxProps.key}
-            boxProps={boxProps}
+            key={boxContainer.key}
+            boxProps={boxContainer.boxProps}
             currentFrame={currentFrame}
-            isSelected={boxProps.key === selectedKey}
+            isSelected={boxContainer.key === selectedKey}
             onSelect={() => {
-              setSelectedKey(boxProps.key);
+              setSelectedKey(boxContainer.key);
             }}
-            onChange={(newProps: BoxProps) => {
-              const boxes = [...boxesProps];
-              boxes[i] = newProps;
-              setBoxesProps(boxes);
+            onChange={(boxProps: BoxProps) => {
+              const boxes = [...boxContainers];
+              boxes[i] = { ...boxes[i], boxProps }; // REVIEW: 順序が変わったときに対応できるか？
+              setBoxContainers(boxes);
             }}
           />
         )))()}

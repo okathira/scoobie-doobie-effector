@@ -2,14 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam";
 import InputArea from "./InputArea";
 import OutputArea from "./OutputArea";
-import { setBoxesPropsContext, boxesPropsContext } from "./contextData";
+import { setBoxContainersContext, boxContainersContext } from "./contextData";
 
 import { createCanvas, makeGrayscale } from "./canvasFunctions";
 import { cameraSize, videoConstraints } from "./defaultConfig";
 
 const App: React.FC = () => {
   const [baseCanvas, setBaseCanvas] = useState(createCanvas(cameraSize));
-  const [boxesProps, setBoxesProps] = useState<BoxProps[]>([]);
+  const [BoxContainers, setBoxContainers] = useState<BoxContainer[]>([]);
 
   const cameraRef = useRef<Webcam>(null);
   const frameInterval = useRef<NodeJS.Timeout>();
@@ -51,12 +51,12 @@ const App: React.FC = () => {
         height={cameraSize.height}
         style={{ position: "absolute" }}
       />
-      <setBoxesPropsContext.Provider value={setBoxesProps}>
-        <boxesPropsContext.Provider value={boxesProps}>
+      <setBoxContainersContext.Provider value={setBoxContainers}>
+        <boxContainersContext.Provider value={BoxContainers}>
           <InputArea layoutSize={cameraSize} />
           <OutputArea layoutSize={cameraSize} baseCanvas={baseCanvas} />
-        </boxesPropsContext.Provider>
-      </setBoxesPropsContext.Provider>
+        </boxContainersContext.Provider>
+      </setBoxContainersContext.Provider>
     </section>
   );
 };

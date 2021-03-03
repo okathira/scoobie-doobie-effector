@@ -6,7 +6,6 @@ type RectSize = {
 };
 
 type BoxProps = {
-  key: number;
   cropX: number;
   cropY: number;
   cropWidth: number;
@@ -15,6 +14,15 @@ type BoxProps = {
   y: number;
   width: number;
   height: number;
-  scaleX: number;
-  scaleY: number;
+};
+
+type Flip = {
+  horizontal: boolean;
+  vertical: boolean;
+};
+
+type BoxContainer = {
+  key: number;
+  boxProps: BoxProps;
+  flip: Flip;
 };
