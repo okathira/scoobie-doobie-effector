@@ -35,8 +35,6 @@ const ClippingBoxes: React.FC<{
           });
         }}
         onTransformEnd={() => {
-          // FIXME: 変形中は枠線部を含めた表示倍率を変更しているためその分ずれる。
-
           // transformerはnodeのscaleを変更し、widthとheightはそのまま。
           // しかし、データの管理を容易にするため、変形終了時にスケールをリセットする。
           const node = shapeRef.current!;
@@ -56,7 +54,7 @@ const ClippingBoxes: React.FC<{
             height: Math.max(minimumBoxSize, node.height() * scaleY),
           });
         }}
-        {...boxProps} // REVIEW: ここにkeyが展開されるのは余計か？
+        {...boxProps}
         image={currentFrame}
         stroke={"black"}
         strokeWidth={10}
@@ -74,6 +72,8 @@ const ClippingBoxes: React.FC<{
               : newBox;
           }}
           rotateEnabled={false}
+          ignoreStroke={true}
+          padding={5} // strokeWidth /2
         />
       )}
     </>
