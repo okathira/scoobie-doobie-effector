@@ -10,10 +10,7 @@ const Controller: React.FC<{
   const [selectedKey, setSelectedKey] = selectedKeyState;
   const setBoxContainer = useSetBoxContainers();
 
-  // 選択されたClippingBoxのboxPropsを書き換える関数を返す
-  const affectSelectedBox = (
-    changeProps: (preProps: BoxProps) => BoxProps
-  ) => () => {
+  const affectSelectedBox = (changeProps: (preProps: BoxProps) => BoxProps) => {
     if (selectedKey === undefined) {
       console.error("No Boxes Selected");
       return null;
@@ -54,13 +51,13 @@ const Controller: React.FC<{
       </div>
       <div>
         <button
-          onClick={affectSelectedBox(flipHorizontally)}
+          onClick={() => affectSelectedBox(flipHorizontally)}
           disabled={selectedKey === undefined}
         >
           左右反転
         </button>
         <button
-          onClick={affectSelectedBox(flipVertically)}
+          onClick={() => affectSelectedBox(flipVertically)}
           disabled={selectedKey === undefined}
         >
           上下反転
