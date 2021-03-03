@@ -7,7 +7,7 @@ const Controller: React.FC<{
     React.Dispatch<React.SetStateAction<number | undefined>>
   ];
 }> = ({ selectedKeyState }) => {
-  const [selectedKey] = selectedKeyState;
+  const [selectedKey, setSelectedKey] = selectedKeyState;
   const setBoxContainer = useSetBoxContainers();
 
   // 選択されたClippingBoxのboxPropsを書き換える関数を返す
@@ -44,18 +44,28 @@ const Controller: React.FC<{
 
   return (
     <div>
-      <button
-        onClick={affectSelectedBox(flipHorizontally)}
-        disabled={selectedKey === undefined}
-      >
-        左右反転
-      </button>
-      <button
-        onClick={affectSelectedBox(flipVertically)}
-        disabled={selectedKey === undefined}
-      >
-        上下反転
-      </button>
+      <div>
+        <button
+          onClick={() => setSelectedKey(undefined)}
+          disabled={selectedKey === undefined}
+        >
+          選択解除
+        </button>
+      </div>
+      <div>
+        <button
+          onClick={affectSelectedBox(flipHorizontally)}
+          disabled={selectedKey === undefined}
+        >
+          左右反転
+        </button>
+        <button
+          onClick={affectSelectedBox(flipVertically)}
+          disabled={selectedKey === undefined}
+        >
+          上下反転
+        </button>
+      </div>
     </div>
   );
 };
