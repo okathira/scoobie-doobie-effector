@@ -6,7 +6,6 @@ type RectSize = {
 };
 
 type BoxProps = {
-  key: number;
   cropX: number;
   cropY: number;
   cropWidth: number;
@@ -15,4 +14,6 @@ type BoxProps = {
   y: number;
   width: number;
   height: number;
+  scaleX: number;
+  scaleY: number;
 };

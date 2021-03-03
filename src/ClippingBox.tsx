@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from "react";
 import { Image, Transformer } from "react-konva";
 
 import Konva from "konva";
-import { minimumBoxSize } from "./defaultConfig";
 
 const ClippingBoxes: React.FC<{
   currentFrame: CanvasImageSource;
@@ -35,45 +34,38 @@ const ClippingBoxes: React.FC<{
           });
         }}
         onTransformEnd={() => {
-          // FIXME: 変形中は表示倍率を変更しているため枠線にも影響が出るのに対し、
-          // 変形後は枠線の幅が戻るため、結果を確認しながら操作ができなくなっている。
-
           // transformerはnodeのscaleを変更し、widthとheightはそのまま。
           // しかし、データの管理を容易にするため、変形終了時にスケールをリセットする。
           const node = shapeRef.current!;
           const scaleX = node.scaleX();
           const scaleY = node.scaleY();
 
-          // もとに戻す
-          node.scaleX(1);
-          node.scaleY(1);
-
+          // FIXME: 変形後の一瞬だけ直前の座標で描画されてちらつく
           onChange({
             ...boxProps,
             x: node.x(),
             y: node.y(),
-            // 最小値を指定する
-            width: Math.max(minimumBoxSize, node.width() * scaleX),
-            height: Math.max(minimumBoxSize, node.height() * scaleY),
+            scaleX,
+            scaleY,
           });
         }}
-        {...boxProps} // REVIEW: ここにkeyが展開されるのは余計か？
+        {...boxProps}
+        offset={{
+          x: shapeRef.current?.width()! / 2,
+          y: shapeRef.current?.height()! / 2,
+        }}
         image={currentFrame}
         stroke={"black"}
         strokeWidth={10}
+        strokeScaleEnabled={false}
         draggable
       />
       {isSelected && (
         <Transformer
           ref={transformerRef}
-          boundBoxFunc={(oldBox, newBox) => {
-            // リサイズ制限
-            return newBox.width < minimumBoxSize ||
-              newBox.height < minimumBoxSize
-              ? oldBox
-              : newBox;
-          }}
           rotateEnabled={false}
+          ignoreStroke={true}
+          padding={5} // strokeWidth /2
         />
       )}
     </>

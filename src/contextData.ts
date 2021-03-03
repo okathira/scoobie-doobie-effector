@@ -1,9 +1,11 @@
 import { createContext, Dispatch, SetStateAction, useContext } from "react";
 
-export const boxesPropsContext = createContext<BoxProps[]>([]);
-export const setBoxesPropsContext = createContext<
-  Dispatch<SetStateAction<BoxProps[]>>
+export const boxContainersContext = createContext<Map<number, BoxProps>>(
+  new Map()
+);
+export const setBoxContainersContext = createContext<
+  Dispatch<SetStateAction<Map<number, BoxProps>>>
 >(() => {});
 
-export const useBoxesProps = () => useContext(boxesPropsContext);
-export const useSetBoxesProps = () => useContext(setBoxesPropsContext);
+export const useBoxContainers = () => useContext(boxContainersContext);
+export const useSetBoxContainers = () => useContext(setBoxContainersContext);

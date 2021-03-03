@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Layer, Stage, Rect } from "react-konva";
-import { useSetBoxesProps } from "./contextData";
+import { useSetBoxContainers } from "./contextData";
 
 import Konva from "konva";
 import { Vector2d } from "konva/types/types";
@@ -26,40 +26,45 @@ const SelectionRect: React.FC<{
 const InputArea: React.FC<{
   layoutSize: RectSize;
 }> = ({ layoutSize }) => {
-  const setBoxesProps = useSetBoxesProps();
+  const setBoxContainers = useSetBoxContainers();
   const [mouseDownPos, setMouseDownPos] = useState<Vector2d>({ x: 0, y: 0 });
   const [dragging, setDragging] = useState<Boolean>(false);
 
   const inputAreaRef = useRef<Konva.Stage>(null);
 
-  const addBoxProps = () => {
+  const addBoxContainer = () => {
     const mouseUpPos = getRelativePointerPosition(inputAreaRef) ?? {
       x: 0,
       y: 0,
     };
 
-    setBoxesProps((preState) => [
-      ...preState,
-      (() => {
+    setBoxContainers(
+      (preState): Map<number, BoxProps> => {
         // 左上頂点で座標を管理
         const x = Math.min(mouseDownPos.x, mouseUpPos.x);
         const y = Math.min(mouseDownPos.y, mouseUpPos.y);
-        const width = Math.abs(mouseDownPos.x - mouseUpPos.x);
-        const height = Math.abs(mouseDownPos.y - mouseUpPos.y);
-
-        return {
-          key: preState.length,
+        const width = Math.abs(mouseDownPos.x - mouseUpPos.x) + 1;
+        const height = Math.abs(mouseDownPos.y - mouseUpPos.y) + 1;
+        // 表示時は反転に備えて中心座標で管理
+        const newProps: BoxProps = {
           cropX: x,
           cropY: y,
           cropWidth: width,
           cropHeight: height,
-          x,
-          y,
+          x: x + width / 2,
+          y: y + height / 2,
           width,
           height,
+          scaleX: 1,
+          scaleY: 1,
         };
-      })(),
-    ]);
+
+        const newState = new Map(preState);
+        newState.set(preState.size, newProps);
+
+        return newState;
+      }
+    );
   };
 
   return (
@@ -75,7 +80,7 @@ const InputArea: React.FC<{
         setDragging(true);
       }}
       onMouseUp={() => {
-        addBoxProps();
+        addBoxContainer();
         setDragging(false);
       }}
     >
