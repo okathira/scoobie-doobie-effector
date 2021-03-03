@@ -56,15 +56,13 @@ const InputArea: React.FC<{
           y: y + height / 2,
           width,
           height,
+          scaleX: 1,
+          scaleY: 1,
         };
 
         return {
           key: preState.length, // TODO: 要素の削除に対応させる
           boxProps,
-          flip: {
-            horizontal: false,
-            vertical: false,
-          },
         };
       })(),
     ]);

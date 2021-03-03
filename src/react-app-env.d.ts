@@ -14,15 +14,11 @@ type BoxProps = {
   y: number;
   width: number;
   height: number;
-};
-
-type Flip = {
-  horizontal: boolean;
-  vertical: boolean;
+  scaleX: number;
+  scaleY: number;
 };
 
 type BoxContainer = {
   key: number;
   boxProps: BoxProps;
-  flip: Flip;
 };

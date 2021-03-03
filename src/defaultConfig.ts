@@ -9,5 +9,3 @@ export const videoConstraints: Webcam["props"]["videoConstraints"] = {
 export const cameraSize = {
   ...videoConstraints,
 } as RectSize;
-
-export const minimumBoxSize = 2;

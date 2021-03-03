@@ -28,7 +28,6 @@ const Exhibition: React.FC<{
           <ClippingBox
             key={boxContainer.key}
             boxProps={boxContainer.boxProps}
-            flip={boxContainer.flip}
             currentFrame={currentFrame}
             isSelected={boxContainer.key === selectedKey}
             onSelect={() => {
