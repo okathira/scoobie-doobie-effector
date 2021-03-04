@@ -31,6 +31,7 @@ const InputArea: React.FC<{
   const [dragging, setDragging] = useState<Boolean>(false);
 
   const inputAreaRef = useRef<Konva.Stage>(null);
+  const idNum = useRef<number>(0);
 
   const addBoxContainer = () => {
     const mouseUpPos = getRelativePointerPosition(inputAreaRef) ?? {
@@ -60,7 +61,8 @@ const InputArea: React.FC<{
         };
 
         const newState = new Map(preState);
-        newState.set(preState.size, newProps);
+        newState.set(idNum.current, newProps);
+        idNum.current++;
 
         return newState;
       }
@@ -80,8 +82,8 @@ const InputArea: React.FC<{
         setDragging(true);
       }}
       onMouseUp={() => {
-        addBoxContainer();
         setDragging(false);
+        addBoxContainer(); // stateを変更してからでないとidNumが2回動いてしまうためこの順番
       }}
     >
       <Layer>
