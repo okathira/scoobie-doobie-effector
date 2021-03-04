@@ -39,6 +39,19 @@ const Controller: React.FC<{
     scaleY: -preProps.scaleY,
   });
 
+  const deleteSelectedBox = () => {
+    if (selectedKey === undefined) {
+      console.error("No Boxes Selected");
+      return null;
+    }
+    setBoxContainer((preState) => {
+      const newState = new Map(preState);
+      if (!newState.delete(selectedKey)) console.error("Not Found");
+      return newState;
+    });
+    setSelectedKey(undefined);
+  };
+
   return (
     <div>
       <div>
@@ -47,6 +60,12 @@ const Controller: React.FC<{
           disabled={selectedKey === undefined}
         >
           選択解除
+        </button>
+        <button
+          onClick={() => deleteSelectedBox()}
+          disabled={selectedKey === undefined}
+        >
+          削除
         </button>
       </div>
       <div>
