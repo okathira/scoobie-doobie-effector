@@ -52,6 +52,50 @@ const Controller: React.FC<{
     setSelectedKey(undefined);
   };
 
+  const bringToFront = () => {
+    if (selectedKey === undefined) {
+      console.error("No Boxes Selected");
+      return null;
+    }
+
+    setBoxContainer((preState) => {
+      const selectedBox = preState.get(selectedKey);
+      if (!selectedBox) {
+        console.error("Not Found");
+        return new Map(preState);
+      }
+
+      const newState = new Map(preState);
+      newState.delete(selectedKey);
+      newState.set(selectedKey, selectedBox);
+
+      return newState;
+    });
+  };
+
+  const SendToBack = () => {
+    if (selectedKey === undefined) {
+      console.error("No Boxes Selected");
+      return null;
+    }
+
+    setBoxContainer((preState) => {
+      const selectedBox = preState.get(selectedKey);
+
+      if (!selectedBox) {
+        console.error("Not Found");
+        return new Map(preState);
+      }
+
+      const newState = new Map([
+        [selectedKey, selectedBox],
+        ...Array.from(preState),
+      ]);
+
+      return newState;
+    });
+  };
+
   return (
     <div>
       <div>
@@ -80,6 +124,24 @@ const Controller: React.FC<{
           disabled={selectedKey === undefined}
         >
           上下反転
+        </button>
+      </div>
+      <div>
+        <button
+          onClick={() => {
+            bringToFront();
+          }}
+          disabled={selectedKey === undefined}
+        >
+          最前面へ
+        </button>
+        <button
+          onClick={() => {
+            SendToBack();
+          }}
+          disabled={selectedKey === undefined}
+        >
+          最背面へ
         </button>
       </div>
     </div>
