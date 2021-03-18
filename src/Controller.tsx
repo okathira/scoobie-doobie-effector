@@ -13,7 +13,7 @@ const Controller: React.FC<{
   const affectSelectedBox = (changeProps: (preProps: BoxProps) => BoxProps) => {
     if (selectedKey === undefined) {
       console.error("No Boxes Selected");
-      return null;
+      return;
     }
 
     setBoxContainer((preState) => {
@@ -44,6 +44,7 @@ const Controller: React.FC<{
       console.error("No Boxes Selected");
       return null;
     }
+
     setBoxContainer((preState) => {
       const newState = new Map(preState);
       if (!newState.delete(selectedKey)) console.error("Not Found");
@@ -55,7 +56,7 @@ const Controller: React.FC<{
   const bringToFront = () => {
     if (selectedKey === undefined) {
       console.error("No Boxes Selected");
-      return null;
+      return;
     }
 
     setBoxContainer((preState) => {
@@ -76,7 +77,7 @@ const Controller: React.FC<{
   const SendToBack = () => {
     if (selectedKey === undefined) {
       console.error("No Boxes Selected");
-      return null;
+      return;
     }
 
     setBoxContainer((preState) => {
@@ -100,13 +101,17 @@ const Controller: React.FC<{
     <div>
       <div>
         <button
-          onClick={() => setSelectedKey(undefined)}
+          onClick={() => {
+            setSelectedKey(undefined);
+          }}
           disabled={selectedKey === undefined}
         >
           選択解除
         </button>
         <button
-          onClick={() => deleteSelectedBox()}
+          onClick={() => {
+            deleteSelectedBox();
+          }}
           disabled={selectedKey === undefined}
         >
           削除
@@ -114,13 +119,17 @@ const Controller: React.FC<{
       </div>
       <div>
         <button
-          onClick={() => affectSelectedBox(flipHorizontally)}
+          onClick={() => {
+            affectSelectedBox(flipHorizontally);
+          }}
           disabled={selectedKey === undefined}
         >
           左右反転
         </button>
         <button
-          onClick={() => affectSelectedBox(flipVertically)}
+          onClick={() => {
+            affectSelectedBox(flipVertically);
+          }}
           disabled={selectedKey === undefined}
         >
           上下反転
