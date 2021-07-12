@@ -2,6 +2,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 # スクービーウービードゥービーなウェブカメラエフェクター
 
+https://okathira.github.io/scoobie-doobie-effector/
+
 ウェブカメラを使います。カメラの情報を送信などはしてません。
 
 https://user-images.githubusercontent.com/43328895/125362015-284c4f80-e3a9-11eb-96b9-ceed2348b9e7.mp4
